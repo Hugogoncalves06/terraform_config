@@ -1,0 +1,25 @@
+name: Event Deploy React Application
+
+on:
+  repository_dispatch:
+    types:
+      - dispatch-event
+
+jobs:
+  terraform_env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.12.2
+      - name: Terraform init
+        run: terraform init
+      - name: Terraform validate
+        run: terraform validate
+      - name: Terraform plan
+        run: terraform plan
+      - name: Terraform apply
+        run: terraform apply
