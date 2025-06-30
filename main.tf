@@ -9,6 +9,10 @@ terraform {
 
 provider "docker" {}
 
+resource "docker_network" "app_network" {
+  name = "app-network"
+}
+
 # MongoDB
 resource "docker_image" "mongo" {
   name         = "mongo:6.0"
@@ -26,10 +30,13 @@ resource "docker_container" "mongo" {
     "MONGO_INITDB_DATABASE=blog-api"
   ]
   volumes {
-    host_path      = "${path.module}/mongo_data"
+    host_path      = "${abspath(path.module)}/mongo_data"
     container_path = "/data/db"
   }
   restart = "unless-stopped"
+  networks_advanced {
+    name = docker_network.app_network.name
+  }
 }
 
 # MySQL
@@ -52,10 +59,14 @@ resource "docker_container" "mysql" {
     "MYSQL_ROOT_PASSWORD=password"
   ]
   volumes {
-    host_path      = "${path.module}/mysql_data"
+    host_path      = "${abspath(path.module)}/mysql_data"
     container_path = "/var/lib/mysql"
   }
   restart = "unless-stopped"
+  networks_advanced {
+    name = docker_network.app_network.name
+    aliases = ["mysql"]
+  }
 }
 
 # API Node.js
@@ -81,6 +92,9 @@ resource "docker_container" "api_nodejs" {
     "RATE_LIMIT_MAX_REQUESTS=100"
   ]
   depends_on = [docker_container.mongo]
+  networks_advanced {
+    name = docker_network.app_network.name
+  }
 }
 
 # API Python
@@ -104,4 +118,7 @@ resource "docker_container" "api_python" {
     "FLASK_ENV=development"
   ]
   depends_on = [docker_container.mysql]
+  networks_advanced {
+    name = docker_network.app_network.name
+  }
 } 
