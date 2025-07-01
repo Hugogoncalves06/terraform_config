@@ -27,7 +27,7 @@ jobs:
       - name: Terraform apply
         run: terraform apply --auto-approve
       - name: Docker ps
-        run: docker ps
+        run: docker ps && sleep 15
       - name: Check all services are up
         run: |
           chmod +x scripts/check_services.sh
