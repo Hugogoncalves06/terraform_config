@@ -128,9 +128,10 @@ resource "docker_container" "api_python" {
   networks_advanced {
     name = docker_network.app_network.name
   }
-  provisioner "local-exec" {
-    command = "docker inspect --format='{{.State.Health.Status}}' mysql | grep -q 'healthy'"
-  }
+  command = [
+    "sh", "-c",
+    "until mysql ping -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD --silent; do echo waiting for mysql; sleep 2; done; python hello.py"
+  ]
 }
 
 # Frontend React
