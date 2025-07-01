@@ -67,6 +67,13 @@ resource "docker_container" "mysql" {
     name = docker_network.app_network.name
     aliases = ["mysql"]
   }
+  healthcheck {
+    test         = ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uadmin", "-ppassword"]
+    interval     = "10s"
+    timeout      = "5s"
+    retries      = 5
+    start_period = "30s"
+  }
 }
 
 # API Node.js
@@ -117,7 +124,35 @@ resource "docker_container" "api_python" {
     "MYSQL_DATABASE=users_db",
     "FLASK_ENV=development"
   ]
-  depends_on = [docker_container.mysql]
+  depends_on = [docker_container.mysql,docker_container.mongo]
+  networks_advanced {
+    name = docker_network.app_network.name
+  }
+  provisioner "local-exec" {
+    command = "docker inspect --format='{{.State.Health.Status}}' mysql | grep -q 'healthy'"
+  }
+}
+
+# Frontend React
+resource "docker_image" "frontend" {
+  name         = "hugogoncalves06/ci_cd_frontend_react_ynov:latest"
+  keep_locally = false
+}
+
+resource "docker_container" "frontend" {
+  image = docker_image.frontend.image_id
+  name  = "frontend"
+  ports {
+    internal = 3000
+    external = 3000
+  }
+  env = [
+    "REACT_APP_PYTHON_API=http://localhost:8000",
+    "MYSQL_HOST=mysql",
+    "MYSQL_DATABASE=users_db",
+    "MYSQL_USER=admin"
+  ]
+  depends_on = [docker_container.api_python]
   networks_advanced {
     name = docker_network.app_network.name
   }

@@ -23,3 +23,7 @@ jobs:
         run: terraform plan
       - name: Terraform apply
         run: terraform apply
+      - name: Check all services are up
+        run: |
+          chmod +x scripts/check_services.sh
+          ./scripts/check_services.sh
