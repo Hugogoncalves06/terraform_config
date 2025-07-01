@@ -32,3 +32,5 @@ jobs:
         run: |
           chmod +x scripts/check_services.sh
           ./scripts/check_services.sh
+      - name: Docker ps
+        run: docker ps
