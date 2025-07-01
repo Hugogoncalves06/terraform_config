@@ -1,6 +1,9 @@
 name: Event Deploy React Application
 
 on:
+  push:
+    branches:
+      - main
   repository_dispatch:
     types:
       - dispatch-event
@@ -23,6 +26,8 @@ jobs:
         run: terraform plan
       - name: Terraform apply
         run: terraform apply --auto-approve
+      - name: Docker ps
+        run: docker ps
       - name: Check all services are up
         run: |
           chmod +x scripts/check_services.sh
