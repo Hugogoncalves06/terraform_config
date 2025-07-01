@@ -11,6 +11,9 @@ on:
 jobs:
   terraform_env:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform_config/Docker
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

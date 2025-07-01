@@ -1,3 +1,5 @@
+// This Terraform configuration should be applied from the 'terraform_config/Docker' directory.
+
 terraform {
   required_providers {
     docker = {
