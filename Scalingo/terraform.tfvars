@@ -1,0 +1,2 @@
+scalingo_api_token=tk-us-qwVQvSH7LNPy5FyYfRAgsfoEBlA1UpUF8cIEB585QuBBwwhY
+jwt_secret='your-secret'
