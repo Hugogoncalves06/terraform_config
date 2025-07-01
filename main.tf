@@ -130,8 +130,15 @@ resource "docker_container" "api_python" {
   }
   command = [
     "sh", "-c",
-    "until mysql ping -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD --silent; do echo waiting for mysql; sleep 2; done; python hello.py"
+    "until mysqladmin ping -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD --silent; do echo waiting for mysql; sleep 2; done; python hello.py"
   ]
+  healthcheck {
+    test         = ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    interval     = "10s"
+    timeout      = "5s"
+    retries      = 5
+    start_period = "30s"
+  }
 }
 
 # Frontend React
