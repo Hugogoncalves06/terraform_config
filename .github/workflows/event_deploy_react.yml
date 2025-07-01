@@ -34,3 +34,5 @@ jobs:
           ./scripts/check_services.sh
       - name: Docker ps
         run: docker ps
+      - name: Terraform destroy
+        run: terraform destroy --auto-approve
