@@ -33,7 +33,7 @@ jobs:
         run: docker ps && sleep 15
       - name: Check all services are up
         run: |
-          chmod +x scripts/check_services.sh
+          chmod +x ../scripts/check_services.sh
           ../scripts/check_services.sh
       - name: Docker ps
         run: docker ps
